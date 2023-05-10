@@ -46,6 +46,8 @@ open class LBXScanViewController: UIViewController {
     // 相机启动提示文字
     public var readyString: String! = "loading"
 
+    private let picker = UIImagePickerController()
+
     open override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -152,11 +154,15 @@ open class LBXScanViewController: UIViewController {
     
     @objc open func openPhotoAlbum() {
         LBXPermissions.authorizePhotoWith { [weak self] _ in
-            let picker = UIImagePickerController()
-            picker.sourceType = UIImagePickerController.SourceType.photoLibrary
-            picker.delegate = self
-            picker.allowsEditing = true
-            self?.present(picker, animated: true, completion: nil)
+            guard let self else {
+                return
+            }
+            self.picker.sourceType = UIImagePickerController.SourceType.photoLibrary
+            self.picker.delegate = self
+            self.picker.allowsEditing = true
+            self.present(self.picker, animated: true, completion: {
+                self.picker.delegate = self
+            })
         }
     }
 }
